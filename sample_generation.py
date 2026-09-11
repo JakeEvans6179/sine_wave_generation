@@ -142,3 +142,21 @@ actual_sine_values = np.sin(inference_test_values)
 
 print(actual_sine_values)
 print(predicted_sine_values)
+
+model.save('sine_prediction.keras')
+print("saved model")
+
+
+#convert to tflite 
+
+converter = tf.lite.TFLiteConverter.from_keras_model(model)
+converter.optimizations = [tf.lite.Optimize.DEFAULT] #by default quantises weights to int8 while keeping input and output as floats
+
+
+tflite_quant_model = converter.convert()
+
+
+with open('sine_model_weight_quant.tflite', 'wb') as f:
+    f.write(tflite_quant_model)
+
+print("Weight-only quantized model saved")
